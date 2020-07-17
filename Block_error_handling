@@ -1,0 +1,33 @@
+- hosts: localhost
+  become: yes
+  gather_facts: yes
+  become_user: root
+  tasks:
+      - name: installing webserver on Redhat family
+        yum:
+         name: httpd
+         state: latest
+      - name: Restart httpd
+        service:
+         name: httpd
+         state: restarted  
+    when: ansible_os_family=="RedHat"
+    ignore_errors: yes
+    
+  - block:
+      - name: installing webserver  on Debian family
+        yum:
+         name: apache2
+         state: latest
+      - name: Restart apache2
+        service:
+         name: apache2
+         state: restarted  
+    when: ansible_os_family=="Debian"
+    ignore_errors: yes
+    rescue: 
+      - debug:
+          msg: " this rescue will run when any one of task failed in block"
+    finally:
+      - debug:
+          msg: " this will always if block failed or not"
