@@ -1,0 +1,24 @@
+- hosts: nodes
+  become: true
+  tasks:
+  - name: Download Maven
+    get_url: 
+     url: https://downloads.apache.org/maven/maven-3/3.6.3/source/apache-maven-3.6.3-src.tar.gz
+     dest: /opt/home/apache-maven-3.6.3-src.tar.gz
+  - name: Extracting file   
+    unarchive:
+     src: /opt/home/apache-maven-3.6.3-src.tar.gz
+     dest: /opt/home/
+     remote_src: yes
+  - name: Move to a smaller directory
+    command: mv /opt/home/apache-maven-3.6.3 /opt/home/maven
+  - name: Update Profile
+    copy: 
+     content: "export M2_HOME=/opt/home/maven \n" 
+     dest: /etc/profile.d/maven.sh
+  # lineinfile is used to add additional or append lines to existing files.
+  - lineinfile:
+     path: /etc/profile.d/maven.sh
+     line: 'export PATH=${M2_HOME}/bin:${PATH}'
+  - name: Source profile
+    shell: source /etc/profile.d/maven.sh
