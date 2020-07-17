@@ -1,16 +1,6 @@
-[root@ansible-master ansible]# cat hosts
-[dev-redhat]
-testserver1
-testserver2
-[root@ansible-master ansible]#
 
-[root@ansible-master ansible]# ansible dev-redhat -m shell -a "uname -a;uptime"
-[root@ansible-master ansible]# ansible dev-redhat -m shell -a "ps -eaf | grep apache"
-[root@ansible-master ansible]# ansible dev-redhat -m shell -a "systemctl stop httpd.service"
-
-[root@ansible-master ansible]# cat linuxpatching.yml
 ---
-## Demo Ansible Playbook to perform patching on RHEl/CentOS Server
+##  Ansible Playbook to perform patching on RHEl/CentOS Server
 ## For Demo Purpose only.. Use it at your own responsibility.
 ## Can update it as per your requirements - Yogesh 27/12/2016
 
