@@ -17,7 +17,7 @@
      path: /usr/lib/jvm/{{ set_java }}/bin/java
   - name: Download Maven
     get_url: 
-     url: https://downloads.apache.org/maven/maven-{{ mvn_version }}.split('.')[0]/{{ mvn_ver }}/source/apache-maven-{{ mv_ver}}-src.tar.gz
+     url: https://downloads.apache.org/maven/maven-{{ mvn_version.split('.')[0] }}/{{ mvn_ver }}/source/apache-maven-{{ mv_ver}}-src.tar.gz
      dest: /opt/home/apache-maven-{{ mvn_ver }}-src.tar.gz
   - name: Extracting file   
     unarchive:
