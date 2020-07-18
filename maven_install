@@ -2,7 +2,17 @@
   become: true
 - vars:
    - mvn_ver: 3.6.3
+   - req_java_ver: 
   tasks:
+   - name: installing required java
+    yum:
+     name: "{{ req_java_ver }}"
+     state: present
+  - name: setting up java
+    alternatives:
+     name: java
+     link: /usr/bin/java
+     path: /usr/lib/jvm/{{ set_java }}/bin/java
   - name: Download Maven
     get_url: 
      url: https://downloads.apache.org/maven/maven-{{ mvn_version }}.split('.')[0]/{{ mvn_ver }}/source/apache-maven-{{ mv_ver}}-src.tar.gz
