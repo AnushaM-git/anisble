@@ -1,8 +1,10 @@
 - hosts: nodes
   become: true
+  bdecom_method: sudo
 - vars:
    - mvn_ver: 3.6.3
-   - req_java_ver: 
+   - req_java_ver: java-1.8.0-openjdk
+   - set_java: jre-1.8.0-openjdk
   tasks:
    - name: installing required java
     yum:
