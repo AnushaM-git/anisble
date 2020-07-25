@@ -1,0 +1,23 @@
+# Configure bashprofile — add a new line to set java home
+# lineinfile: This module ensures a particular line is in a file, or replace an existing line using a back-referenced regular expression.
+
+--- 
+- hosts: nodes
+  become_user: root
+  become_method: sudo
+  vars:
+   java_home: /usr/lib/jvm
+  tasks:
+  - name: Configure bash_profile
+    lineinfile:
+     dest: ~/.bash_profile
+     regexp: '^JAVA_HOME='
+     line: "JAVA_HOME={{ java_home }}"
+    ignore_errors: true
+    
+  - name: Configure bashrc
+    lineinfile:
+     regexp: '^JAVA_HOME='
+     line: "JAVA_HOME={{ java_home }}"
+     dest:  ~/.bashrc
+    ignore_errors: true 
