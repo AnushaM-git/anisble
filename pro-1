@@ -11,7 +11,8 @@
   become_user: root
   become_metho:sudo
   gather_facts: yes
-  vars_file
+  vars_file:
+   - password_file
   tasks:
   - name: Update packages
     package: 
@@ -24,10 +25,10 @@
      state: present
     when: ansible_os_family=="RedHat"
 	
-	apt:
-	 name: package names
-	 state: present
-	when: ansible_os_family=="Debian"
+    apt:
+     name: package names
+     state: present
+    when: ansible_os_family=="Debian"
   
   - name: install latest docker-ce
     package:
@@ -35,10 +36,10 @@
 	 state: latest
   
   - name: Create new Tempuser
-     user:
-	  name: tempuser
-	  shell: /bin/bash
-	  password: "{{ password_file }}"
+    user:
+      name: tempuser
+      shell: /bin/bash
+      password: "{{ password_file }}"
 	
   - name: Add Temp user to the sudoers
     copy:
@@ -53,11 +54,11 @@
 	 
   - name:Disable Password Authentication
     lineinfile:
-	 dest=/etc/ssh/sshd_config
-     regexp='^PasswordAuthentication'
-     line="PasswordAuthentication no"
-     state=present
-     backup=yes
+      dest=/etc/ssh/sshd_config
+      regexp='^PasswordAuthentication'
+      line="PasswordAuthentication no"
+      state=present
+      backup=yes
 	 
   - name: Disable Root Login
     lineinfile:
