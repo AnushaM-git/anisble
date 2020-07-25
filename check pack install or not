@@ -1,0 +1,45 @@
+# Find applications which are installed on a system
+# You want to check list of packages installed on your system.
+no_log: We have set this variable as true. If you save Ansible output to a log, you expose any secret data in your Ansible output, such as passwords and user names. To keep sensitive values out of your logs, mark tasks that expose them with the no_log: True 
+Install the package if not installed else skip the playbook
+Parsing the json output to find a particular application and using set_fact for setting the output in a new variable
+fail: This module fails the progress with a custom message using when condition
+Set a variable if application is not installed.
+
+
+---
+- hosts: nodes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+  - name: List of all installed packages
+    yum: 
+     list: installed
+    register: installed_packages 
+   
+  - name: test particular package is install or not using set_fact module
+    set_fact: 
+     test_installed_packages: "{{ installed_packages.result | json_query(query) }}"
+     vars:
+      - query: "[?name=='vim-minimal']"
+      
+   - name: print variable test_installed_packages
+     debug:
+      - msg: "{{  test_installed_packages }}"
+      
+    - name: Check required package installed or not. Skip playbook if installed already
+      fail: 
+       msg: Package installed already  
+      when: test_installed_packages | length >0 
+      
+     - name: Setting a variable if application is not installed
+       set_fact:
+        application_installed: False
+       when: not test_installed_packages
+        
+      - name: display variable
+        debug:
+         msg: "application not installed"
+        when: not application_installed
+      
