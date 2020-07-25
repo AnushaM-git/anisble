@@ -1,0 +1,77 @@
+#update packages
+# install latest docker-ce
+# create a new user [tempuser]
+# install ssh pubkey
+# disable password login
+# disable root login
+# Now, you can only connect to the system SSH keys
+
+---
+- hosts:
+  become_user: root
+  become_metho:sudo
+  gather_facts: yes
+  vars_file
+  tasks:
+  - name: Update packages
+    package: 
+	 name: * /names of packages
+	 state: latest
+	 
+  - name: Update packages depends upon os distribution
+    yum:
+     name: package name
+     state: present
+    when: ansible_os_family=="RedHat"
+	
+	apt:
+	 name: package names
+	 state: present
+	when: ansible_os_family=="Debian"
+  
+  - name: install latest docker-ce
+    package:
+	 name: docker-ce
+	 state: latest
+  
+  - name: Create new Tempuser
+     user:
+	  name: tempuser
+	  shell: /bin/bash
+	  password: "{{ password_file }}"
+	
+  - name: Add Temp user to the sudoers
+    copy:
+	 dest: "/etc/sudoers.d/tempuser"
+	 content: "devops  ALL=(ALL)  NOPASSWD: ALL"
+	 
+  - name: Deploy SSH Key
+    authorized_key:
+	 user: tempuser
+	 key: "{{ lookup('file', '/home/tempuser/.ssh/id_rsa.pub') }}"
+	 state: present
+	 
+  - name:Disable Password Authentication
+    lineinfile:
+	 dest=/etc/ssh/sshd_config
+     regexp='^PasswordAuthentication'
+     line="PasswordAuthentication no"
+     state=present
+     backup=yes
+	 
+  - name: Disable Root Login
+    lineinfile:
+     dest=/etc/ssh/sshd_config
+     regexp='^PermitRootLogin'
+     line="PermitRootLogin no"
+     state=present
+     backup=yes
+    notify:
+       - restart ssh  
+	   
+  handlers:
+  - name: restart ssh
+    service:
+      name: sshd
+      state: restarted   
+	 
